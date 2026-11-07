@@ -1,0 +1,129 @@
+{
+  "config_differences": {
+    "holdout_45_encoder": [
+      "output.checkpoint_root",
+      "output.result_root",
+      "protocol.test_sections",
+      "protocol.train_sections"
+    ],
+    "holdout_45_mlp": [
+      "alignment.train_sections",
+      "alignment.val_sections",
+      "model.init_from",
+      "training.checkpoint_dir"
+    ],
+    "holdout_45_attention": [
+      "alignment.train_sections",
+      "alignment.val_sections",
+      "model.init_from",
+      "training.checkpoint_dir"
+    ],
+    "holdout_12_encoder": [
+      "output.checkpoint_root",
+      "output.result_root",
+      "protocol.test_sections",
+      "protocol.train_sections"
+    ],
+    "holdout_12_mlp": [
+      "alignment.train_sections",
+      "alignment.val_sections",
+      "model.init_from",
+      "training.checkpoint_dir"
+    ],
+    "holdout_12_attention": [
+      "alignment.train_sections",
+      "alignment.val_sections",
+      "model.init_from",
+      "training.checkpoint_dir"
+    ]
+  },
+  "dataset_checks": {
+    "holdout_45_encoder": {
+      "train_windows": 2342,
+      "evaluation_windows": 589,
+      "dims": {
+        "meg_channels": 306,
+        "meg_time": 200,
+        "fmri_dim": 2304,
+        "text_dim": 768
+      }
+    },
+    "holdout_45_mlp": {
+      "train_windows": 2342,
+      "evaluation_windows": 589,
+      "dims": {
+        "meg_channels": 306,
+        "meg_time": 200,
+        "fmri_dim": 2304,
+        "text_dim": 768
+      }
+    },
+    "holdout_45_attention": {
+      "train_windows": 2342,
+      "evaluation_windows": 589,
+      "dims": {
+        "meg_channels": 306,
+        "meg_time": 200,
+        "fmri_dim": 2304,
+        "text_dim": 768
+      }
+    },
+    "holdout_12_encoder": {
+      "train_windows": 2336,
+      "evaluation_windows": 595,
+      "dims": {
+        "meg_channels": 306,
+        "meg_time": 200,
+        "fmri_dim": 2304,
+        "text_dim": 768
+      }
+    },
+    "holdout_12_mlp": {
+      "train_windows": 2336,
+      "evaluation_windows": 595,
+      "dims": {
+        "meg_channels": 306,
+        "meg_time": 200,
+        "fmri_dim": 2304,
+        "text_dim": 768
+      }
+    },
+    "holdout_12_attention": {
+      "train_windows": 2336,
+      "evaluation_windows": 595,
+      "dims": {
+        "meg_channels": 306,
+        "meg_time": 200,
+        "fmri_dim": 2304,
+        "text_dim": 768
+      }
+    }
+  },
+  "source_sha256": {
+    "configs/unified_benchmark_task1529545_matched.yaml": "472435d080ca52e1ffd5f4ca4e1cbd2ad27839b39ca9b43185dbc7ff5f551e00",
+    "configs/unified_fixed_encoder_legacy_mlp.yaml": "64c6f8f18ce42dc92b4863c5b036d72dacf578bc4a84726f04ccb0eb29c0049f",
+    "configs/unified_fixed_encoder_legacy_attention.yaml": "46818e779608fa3d8702e85ac4a100ed9eac6d6872f4e30e755652b600822a5b",
+    "unified_benchmark.py": "4667fa26e40a2fc8adcd1cd27a3882f94db30f354157b3fbb58b7d5389e01ce9",
+    "train_subject_pair_exhaustive.py": "38e487b4ffdcb8ab6c992ff477824f831027aa0df902f261a950fb93eee8e397",
+    "exhaustive_subject_pair.py": "0665336fb0f4cd9acec367693c3102a3a0cacfb1d6f94cb4dc57fa926ec01a3a",
+    "cross_subject_generalization.py": "8e703d94f7f629347481a3e644b14d8c54075e299f2f6dae08aff92ffee58822",
+    "window_selection.py": "9b58c32d6f3bb28d0bc67a629e9c6289240d606d18020eb7992fa7bc06cee775",
+    "models/brain_clip.py": "ddf89ce99c7839f865858165bf4d514953208faf6e11ccd9e01499695f79dc66",
+    "models/encoders.py": "a54d235178b5369c3064cc1b824dc3f000e5cce3df73840f4bd3e27184f44471"
+  },
+  "unchanged_encoder_functions": [
+    "set_seed",
+    "_subject_names",
+    "fmri_delay_feature_indices",
+    "build_model",
+    "make_train_loader",
+    "_freeze_encoders",
+    "evaluate_selection_mean",
+    "train_fixed_epochs",
+    "load_frozen_fusion",
+    "random_retrieval_baseline",
+    "_git_commit",
+    "_print_test_metrics"
+  ],
+  "encoder_execution_prefix_matches": true
+}

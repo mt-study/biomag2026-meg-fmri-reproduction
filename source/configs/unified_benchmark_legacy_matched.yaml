@@ -1,0 +1,41 @@
+project_dir: /gpfs/userdata/ldeng/Speech-BCI/biomag2026/0907/meg_fmri_clip_cc_0907
+
+data:
+  window_cache: cache/windows_subject_pairs
+
+protocol:
+  train_sections: [1, 2, 3, 4, 5, 6, 7]
+  test_sections: [8, 9]
+  n_subject_folds: 5
+
+model:
+  embedding_dim: 256
+  dropout: 0.3
+  meg_hidden_channels: 128
+  fmri_hidden_dim: 512
+  text_hidden_dim: 512
+  # Parameter-matched heads: about 49.6k MLP vs 49.4k attention parameters.
+  fusion_hidden_dims:
+    mlp: 64
+    attention: 96
+
+training:
+  # Match the original no-fusion task 1529545 wherever the protocols overlap.
+  base_window_batch_size: 64
+  eval_base_window_batch_size: 16
+  eval_pair_chunk_size: 8
+  drop_last: true
+  encoder_epochs: 60
+  fusion_epochs: 60
+  learning_rate: 0.0003
+  weight_decay: 0.01
+  lambda_mf: 1.0
+  lambda_jt: 1.0
+  num_workers: 4
+
+evaluation:
+  random_repeats: 2000
+
+output:
+  checkpoint_root: checkpoints/unified_benchmark_legacy_matched
+  result_root: results/unified_benchmark_legacy_matched

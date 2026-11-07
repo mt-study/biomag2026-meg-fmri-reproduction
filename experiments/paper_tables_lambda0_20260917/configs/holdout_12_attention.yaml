@@ -1,0 +1,41 @@
+project_dir: /gpfs/userdata/ldeng/Speech-BCI/biomag2026/0907/meg_fmri_clip_cc_0907
+data:
+  fmri_root: /gpfs/userdata/ldeng/dataset/speech/fMRI/ds003643-download
+  meg_root: /gpfs/userdata/ldeng/dataset/speech/MEG/lpp_data_challenge
+  language: CN
+  text_information_csv: /gpfs/userdata/ldeng/dataset/speech/fMRI/ds003643-download/annotation/CN/lppCN_word_information.csv
+  text_embedding_csv: /gpfs/userdata/ldeng/dataset/speech/fMRI/ds003643-download/annotation/CN/lppCN_word_embeddings_BERT.csv
+  window_cache: cache/windows_subject_pairs
+alignment:
+  window_seconds: 2
+  fmri_delay_seconds: [2, 4, 6, 8]
+  fmri_tr_seconds: 2
+  train_sections: [3, 4, 5, 6, 7, 8, 9]
+  val_sections: [1, 2]
+sampling:
+  window_cache_mode: subject_pair_exhaustive
+  enumerate_all_subject_pairs: true
+  noise_std: 0.1
+model:
+  embedding_dim: 256
+  dropout: 0.3
+  meg_hidden_channels: 128
+  fmri_hidden_dim: 512
+  text_hidden_dim: 512
+  use_joint: true
+  joint_hidden_dim: 767
+  fusion_mode: attention
+  init_from: /gpfs/userdata/ldeng/Speech-BCI/biomag2026/paper_tables_lambda0_20260917/checkpoints/section_matched/holdout_12/encoder/all_subjects/exhaustive/seed_42/encoder_best.pt
+  freeze_encoders: true
+training:
+  base_window_batch_size: 64
+  eval_base_window_batch_size: 16
+  eval_pair_chunk_size: 8
+  epochs: 60
+  learning_rate: 0.0003
+  weight_decay: 0.01
+  lambda_mf: 0.0
+  lambda_jt: 1.0
+  seed: 42
+  num_workers: 4
+  checkpoint_dir: /gpfs/userdata/ldeng/Speech-BCI/biomag2026/paper_tables_lambda0_20260917/checkpoints/section_matched/holdout_12/attention/s42

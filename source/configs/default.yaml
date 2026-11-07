@@ -1,0 +1,107 @@
+project_dir: /gpfs/userdata/ldeng/Speech-BCI/biomag2026/0907/meg_fmri_clip_cc_0907
+
+data:
+  # Original, read-only dataset roots (raw + author-preprocessed derivatives).
+  fmri_root: /gpfs/userdata/ldeng/dataset/speech/fMRI/ds003643-download
+  meg_root: /gpfs/userdata/ldeng/dataset/speech/MEG/lpp_data_challenge
+  language: CN
+  text_information_csv: /gpfs/userdata/ldeng/dataset/speech/fMRI/ds003643-download/annotation/CN/lppCN_word_information.csv
+  text_embedding_csv: /gpfs/userdata/ldeng/dataset/speech/fMRI/ds003643-download/annotation/CN/lppCN_word_embeddings_BERT.csv
+
+  # Project-owned cache (written only under this project, never into the
+  # dataset roots above). Built once by scripts/preprocess_meg_unified.py,
+  # scripts/build_fmri_cache.py and scripts/build_text_cache.py; train.py /
+  # test_model.py only ever read from here.
+  meg_unified_cache: cache/meg_unified
+  fmri_pooled_cache: cache/fmri_pooled
+  text_embedding_cache: cache/text/lppCN_bert_embeddings.npy
+  # Window-major, standardized, cross-subject-averaged arrays built once by
+  # scripts/build_window_cache.py. This is the ONLY thing train.py reads.
+  window_cache: cache/windows
+
+# Only used by scripts/preprocess_meg_unified.py, applied identically to all
+# 20 subjects' raw FIF files so MEG is uniform across the whole cohort
+# instead of mixing 10 author-derivative subjects with 10 untouched ones.
+# See README.md "MEG unification" for the evidence behind these choices.
+meg_preprocessing:
+  pick_types: [mag, grad]     # the 306 MEG sensors; drop EOG/ECG/STI/etc.
+  highpass_hz: 0.1
+  lowpass_hz: 40.0
+  resample_hz: 100.0          # matches the author-derivative sample rate exactly
+  # Empirically verified (README): each raw run's own duration matches the
+  # trusted 10-subject derivative epoch span (tmax - tmin) to within ~10ms,
+  # so the derivative's tmin=-0.1s-relative-to-onset convention is re-used
+  # uniformly for all 20 subjects rather than re-deriving per-subject onsets.
+  epoch_tmin_seconds: -0.1
+
+alignment:
+  window_seconds: 2
+  fmri_delay_seconds: [2, 4, 6, 8]
+  fmri_tr_seconds: 2
+  # MEG: verified run-1..run-9 == section 1..9 directly for all 20 subjects.
+  meg_run_section_offset: 0
+  # fMRI: NOT a fixed offset -- BIDS run numbers are session-global (other
+  # scanner tasks precede the lppCN story), so the run number where section 1
+  # starts varies per subject (e.g. sub-CN001 runs 04-12, sub-CN003 runs
+  # 05-13). alignment.py instead sorts each subject's 9 lppCN runs by run
+  # number and assigns sections 1..9 in that chronological order; see
+  # README.md "fMRI run-to-section mapping" for the duration cross-check
+  # that validates this.
+  train_sections: [1, 2, 3, 4, 5, 6, 7]
+  val_sections: [8, 9]
+
+# Load-time feature standardization. These are NOT cosmetic -- with them all
+# disabled the model provably cannot learn (see README "Why v1 collapsed").
+normalization:
+  # Raw pooled BOLD is ~99.8% constant baseline; without this, the cosine
+  # similarity between any two fMRI windows is 0.999995 (i.e. identical).
+  fmri_per_voxel_zscore: true
+  # MEG is stored in Tesla (std ~4e-12) with a ~100x mag/grad scale gap.
+  meg_per_channel_zscore: true
+  # Removes the large common component of the BERT space, which otherwise
+  # gives window embeddings a mean pairwise cosine of ~0.51.
+  text_mean_center: true
+
+# Cross-subject averaging happens once, in scripts/build_window_cache.py:
+# every window is the mean over all subjects that have that section (20 MEG,
+# 35 fMRI). Measured MEG inter-subject correlation for a matched window is
+# only ~+0.010 (vs ~+0.000 for mismatched), so a single subject's 2 s
+# response is mostly noise and averaging is what makes the signal usable.
+sampling:
+  # Averaging removed the sample-to-sample variability that random subject
+  # draws used to supply, so add explicit jitter to the (small) training set.
+  # Features are z-scored, so this is in standard-deviation units.
+  noise_std: 0.1
+
+model:
+  embedding_dim: 256
+  # Applied to the MEG and fMRI encoders (the text head uses a lighter 0.1):
+  # both overfit 2.2k training windows badly without it.
+  dropout: 0.3
+  meg_hidden_channels: 128
+  fmri_hidden_dim: 512
+  text_hidden_dim: 512
+  # MEG+fMRI fusion branch. Fuses the two encoders' pre-normalization 256-d
+  # projections; the single-modality losses are kept so one run yields
+  # MEG-only, fMRI-only, late-fusion and learned-fusion numbers on the same
+  # checkpoint. The control it must beat is parameter-free late fusion.
+  use_joint: true
+  joint_hidden_dim: 512
+  # target spatial grid each delayed fMRI volume is average-pooled to before
+  # concatenation; the resulting per-sample fMRI feature dim
+  # (= 4 * prod(fmri_pool_size)) is computed at runtime, never hardcoded.
+  # Also read by scripts/build_fmri_cache.py, which is the single place the
+  # pooling actually happens.
+  fmri_pool_size: [8, 9, 8]
+
+training:
+  batch_size: 64
+  epochs: 60
+  learning_rate: 0.0003
+  weight_decay: 0.01
+  lambda_mf: 1.0
+  lambda_jt: 1.0        # weight of the fused-brain -> text term
+  seed: 42
+  num_workers: 4
+  max_train_windows_per_epoch: 0   # 0 = use all aligned training windows
+  checkpoint_dir: checkpoints

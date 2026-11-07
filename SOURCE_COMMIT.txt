@@ -1,0 +1,4 @@
+The files in source/ were extracted from the server Git commit
+88bd1c438e17e8f9f90e5fa98692c20441dfe64b
+at /gpfs/userdata/ldeng/Speech-BCI/biomag2026/0907/meg_fmri_clip_cc_0907.
+No training or evaluation logic was edited in this archive.

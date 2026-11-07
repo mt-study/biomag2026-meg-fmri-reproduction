@@ -1,0 +1,52 @@
+project_dir: /gpfs/userdata/ldeng/Speech-BCI/biomag2026/0907/meg_fmri_clip_cc_0907
+
+experiment:
+  name: meg_text_window_ablation_v1
+  variable: shared_meg_and_text_window_seconds
+  values: [2, 4, 6, 8]
+  seeds: [42, 43, 44]
+
+data:
+  window_cache: cache/meg_text_window_ablation/shared_w8
+
+protocol:
+  train_sections: [1, 2, 3, 4, 5, 6, 7]
+  test_sections: [8, 9]
+  n_subject_folds: 5
+
+sampling:
+  noise_std: 0.1
+
+model:
+  embedding_dim: 256
+  dropout: 0.3
+  meg_hidden_channels: 128
+  fmri_hidden_dim: 512
+  text_hidden_dim: 512
+  # Preserve the 25 post-convolution time positions of the original 2 s
+  # model while keeping encoder parameter count identical for 4/6/8 s.
+  meg_temporal_bins: 25
+  fusion_hidden_dims:
+    mlp: 512
+
+training:
+  base_window_batch_size: 64
+  eval_base_window_batch_size: 16
+  eval_pair_chunk_size: 8
+  drop_last: true
+  encoder_epochs: 60
+  fusion_epochs: 60
+  learning_rate: 0.0003
+  weight_decay: 0.01
+  lambda_mf: 1.0
+  lambda_jt: 1.0
+  num_workers: 4
+  checkpoint_selection: validation_best
+  fusion_modes: [mlp]
+
+evaluation:
+  random_repeats: 2000
+
+output:
+  checkpoint_root: checkpoints/meg_text_window_ablation
+  result_root: results/meg_text_window_ablation

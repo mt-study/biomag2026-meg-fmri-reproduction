@@ -1,0 +1,68 @@
+project_dir: /gpfs/userdata/ldeng/Speech-BCI/biomag2026/0907/meg_fmri_clip_cc_0907
+data:
+  fmri_root: /gpfs/userdata/ldeng/dataset/speech/fMRI/ds003643-download
+  meg_root: /gpfs/userdata/ldeng/dataset/speech/MEG/lpp_data_challenge
+  language: CN
+  text_information_csv: /gpfs/userdata/ldeng/dataset/speech/fMRI/ds003643-download/annotation/CN/lppCN_word_information.csv
+  text_embedding_csv: /gpfs/userdata/ldeng/dataset/speech/fMRI/ds003643-download/annotation/CN/lppCN_word_embeddings_BERT.csv
+  meg_unified_cache: cache/meg_unified
+  fmri_pooled_cache: cache/fmri_pooled
+  text_embedding_cache: cache/text/lppCN_bert_embeddings.npy
+  window_cache: cache/windows
+meg_preprocessing:
+  pick_types:
+  - mag
+  - grad
+  highpass_hz: 0.1
+  lowpass_hz: 40.0
+  resample_hz: 100.0
+  epoch_tmin_seconds: -0.1
+alignment:
+  window_seconds: 2
+  fmri_delay_seconds:
+  - 2
+  - 4
+  - 6
+  - 8
+  fmri_tr_seconds: 2
+  meg_run_section_offset: 0
+  train_sections:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  val_sections:
+  - 8
+  - 9
+normalization:
+  fmri_per_voxel_zscore: true
+  meg_per_channel_zscore: true
+  text_mean_center: true
+sampling:
+  noise_std: 0.1
+model:
+  embedding_dim: 256
+  dropout: 0.3
+  meg_hidden_channels: 128
+  fmri_hidden_dim: 512
+  text_hidden_dim: 512
+  use_joint: false
+  joint_hidden_dim: 512
+  fmri_pool_size:
+  - 8
+  - 9
+  - 8
+training:
+  batch_size: 64
+  epochs: 60
+  learning_rate: 0.0003
+  weight_decay: 0.01
+  lambda_mf: 1.0
+  lambda_jt: 1.0
+  seed: 10
+  num_workers: 4
+  max_train_windows_per_epoch: 0
+  checkpoint_dir: checkpoints/seeds/nojoint_s10

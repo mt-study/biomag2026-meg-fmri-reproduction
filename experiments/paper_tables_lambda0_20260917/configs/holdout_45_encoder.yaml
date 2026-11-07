@@ -1,0 +1,36 @@
+project_dir: /gpfs/userdata/ldeng/Speech-BCI/biomag2026/0907/meg_fmri_clip_cc_0907
+data:
+  window_cache: cache/windows_subject_pairs
+protocol:
+  train_sections: [1, 2, 3, 6, 7, 8, 9]
+  test_sections: [4, 5]
+  n_subject_folds: 5
+sampling:
+  noise_std: 0.1
+model:
+  embedding_dim: 256
+  dropout: 0.3
+  meg_hidden_channels: 128
+  fmri_hidden_dim: 512
+  text_hidden_dim: 512
+  fusion_hidden_dims:
+    mlp: 64
+    attention: 96
+training:
+  base_window_batch_size: 64
+  eval_base_window_batch_size: 16
+  eval_pair_chunk_size: 8
+  drop_last: true
+  encoder_epochs: 60
+  fusion_epochs: 60
+  learning_rate: 0.0003
+  weight_decay: 0.01
+  lambda_mf: 0.0
+  lambda_jt: 1.0
+  num_workers: 4
+  checkpoint_selection: validation_best
+evaluation:
+  random_repeats: 2000
+output:
+  checkpoint_root: /gpfs/userdata/ldeng/Speech-BCI/biomag2026/paper_tables_lambda0_20260917/checkpoints/section_matched/holdout_45/encoder
+  result_root: /gpfs/userdata/ldeng/Speech-BCI/biomag2026/paper_tables_lambda0_20260917/results/section_matched/holdout_45/encoder
