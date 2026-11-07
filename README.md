@@ -21,7 +21,7 @@ python scripts/prepare_configs.py \
   --output-root /path/to/new-experiment-output
 ```
 
-The data root must contain `MEG/lpp_data_challenge` and `fMRI/ds003643-download`, including the Mandarin story annotations and BERT embedding CSV documented in [source/README.md](source/README.md). Generated YAMLs are written under `.generated/configs/` and the archived YAMLs remain unchanged.
+The data root must contain `MEG/lpp_data_challenge` and `fMRI/ds003643-download`, including the Mandarin story annotations and BERT embedding CSV documented in [source/README.md](source/README.md). The [BIOMAG 2026 challenge portal](https://compneurolinglab.github.io/biomag_challenge/index.html#data-access) describes registration-based access to the MEG challenge bundle; the fMRI corpus is [OpenNeuro ds003643](https://openneuro.org/datasets/ds003643). Generated YAMLs are written under `.generated/configs/` and the archived YAMLs remain unchanged.
 
 The methods and candidate-set definitions are in [RUNBOOK.md](RUNBOOK.md). Full reruns require substantial GPU time and the specified datasets; the publication package has been checked for code syntax and configuration consistency, not retrained outside the original server environment.
 

@@ -2,7 +2,7 @@
 
 ## 1. Environment and inputs
 
-Install the versions in `source/requirements.txt` in a Python environment with the corresponding CUDA runtime. Obtain the MEG challenge recordings and the fMRI `ds003643` derivative and annotation files independently. The expected directory layout and the exact preprocessing choices are documented in `source/README.md`. Keep the released YAMLs unchanged; generate location-specific copies:
+Install the versions in `source/requirements.txt` in a Python environment with the corresponding CUDA runtime. Obtain the MEG recordings through the [BIOMAG 2026 challenge data portal](https://compneurolinglab.github.io/biomag_challenge/index.html#data-access) and the fMRI derivative and annotation files from [OpenNeuro ds003643](https://openneuro.org/datasets/ds003643). The challenge portal requires registration for access; these data are not mirrored here. The expected directory layout and exact preprocessing choices are documented in `source/README.md`. Keep the released YAMLs unchanged; generate location-specific copies:
 
 ```bash
 python scripts/prepare_configs.py \
